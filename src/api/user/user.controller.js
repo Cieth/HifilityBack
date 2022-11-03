@@ -10,23 +10,24 @@ const signUpHandler = async (req, res) => {
   const { email, password } = userData;
   try {
     const existingUser = await User.find({ email });
-    if (!existingUser) throw new Error('User already exists');
-
-    if (password.length < 8)
+    if (!existingUser) {
+      throw new Error('User already exists');
+    }
+    if (password.length < 6) {
       throw new Error('Password must be at least 6 characters long');
-
-    const encodedPassword = await bcrypt.hash(password, 8);
-    const user = await signUp(userData, encodedPassword);
+    }
+    const encodePassword = await bcrypt.hash(password, 8);
+    const user = await signUp(userData, encodePassword);
     const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
       expiresIn: 60 * 60 * 24,
     });
     return res
       .status(201)
-      .json({ message: 'User created succesfully', data: { user, token } });
+      .json({ message: 'User created successfully', data: { user, token } });
   } catch (error) {
     return res
       .status(400)
-      .json({ message: 'User could not be created', error: error.message });
+      .json({ message: 'Error creating user', error: error.message });
   }
 };
 
