@@ -27,7 +27,6 @@ const productSchema = new Schema(
       required: true,
     },
     rating: [String],
-    //products : [{type : Schema.Types.ObjectId,ref : "Product"}]
   },
   { timestamps: true }
 );
