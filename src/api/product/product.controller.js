@@ -49,6 +49,22 @@ const buyProductHandler = async (req, res) => {
   }
 };
 
+const showProductOfUserHandler = async (req, res) => {
+  const userId = req.user;
+  try {
+    const user = await User.findById(userId).populate({
+      path: 'products',
+    });
+    if (!user) throw new Error('Invalid user');
+
+    return res.status(200).json({ message: 'Products:', data: user.products });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ message: 'Product couldnt be fetched', error: error.message });
+  }
+};
+
 const showProductsHandler = async (req, res) => {
   try {
     const products = await showProducts();
@@ -102,4 +118,5 @@ module.exports = {
   showProductHandler,
   deleteProductHandler,
   buyProductHandler,
+  showProductOfUserHandler,
 };

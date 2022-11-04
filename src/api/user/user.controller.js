@@ -44,9 +44,11 @@ const logInHandler = async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
       expiresIn: 60 * 60 * 24,
     });
-    return res
-      .status(200)
-      .json({ message: 'Logged succesfully', data: { token } });
+    return res.status(200).json({
+      message: 'Logged succesfully',
+      data: { products: user.products },
+      token,
+    });
   } catch (error) {
     return res
       .status(400)
