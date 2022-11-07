@@ -7,14 +7,21 @@ const { signUp, login } = require('./user.service');
 
 const signUpHandler = async (req, res) => {
   const userData = req.body;
-  const { email, password } = userData;
+  const { name, email, password } = userData;
   try {
     const existingUser = await User.find({ email });
-    if (!existingUser) {
+    console.log(existingUser);
+    if (existingUser.length !== 0) {
       throw new Error('User already exists');
     }
-    if (password.length < 6) {
-      throw new Error('Password must be at least 6 characters long');
+    if (password.length < 8) {
+      throw new Error('Password must be at least 8 characters long');
+    }
+    if (name.length <= 3) {
+      throw new Error('Name must be at least 4 characters long');
+    }
+    if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)) {
+      throw new Error('Type a valid email');
     }
     const encodePassword = await bcrypt.hash(password, 8);
     const user = await signUp(userData, encodePassword);
@@ -23,7 +30,7 @@ const signUpHandler = async (req, res) => {
     });
     return res
       .status(201)
-      .json({ message: 'User created successfully', data: { user, token } });
+      .json({ message: 'User created successfully', data: { token } });
   } catch (error) {
     return res
       .status(400)
@@ -55,5 +62,39 @@ const logInHandler = async (req, res) => {
       .json({ message: 'There was an error loggin in', error: error.message });
   }
 };
+const updateDataHandler = async (req, res) => {
+  const userId = req.user;
+  const dataToUpdate = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(userId, dataToUpdate);
+    if (!user) throw new Error('Invalid user');
 
-module.exports = { signUpHandler, logInHandler };
+    return res.status(200).json({ message: 'User:', data: user });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ message: 'User couldnt be fetched', error: error.message });
+  }
+};
+const userDataHandler = async (req, res) => {
+  const userId = req.user;
+  try {
+    const user = await User.findById(userId).populate({
+      path: 'products',
+    });
+    if (!user) throw new Error('Invalid user');
+
+    return res.status(200).json({ message: 'User:', data: user });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ message: 'User couldnt be fetched', error: error.message });
+  }
+};
+
+module.exports = {
+  signUpHandler,
+  logInHandler,
+  userDataHandler,
+  updateDataHandler,
+};
