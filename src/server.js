@@ -6,9 +6,8 @@ const expressConfig = require('./express');
 const { connect } = require('./database');
 
 const app = express();
-const port = 8080;
 
-app.listen(port, () => {
+app.listen(process.env.PORT || 3000, () => {
   expressConfig(app);
   connect();
   routesConfig(app);
