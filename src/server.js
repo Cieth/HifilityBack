@@ -12,5 +12,5 @@ app.listen(process.env.PORT || 3000, () => {
   connect();
   routesConfig(app);
 
-  console.log(`listening on http://localhost:${port}`);
+  console.log(`listening on http://localhost:${process.env.PORT}`);
 });
