@@ -7,7 +7,7 @@ const { connect } = require('./database');
 
 const app = express();
 
-app.listen(process.env.PORT || 3000, () => {
+app.listen(process.env.PORT || 8080, () => {
   expressConfig(app);
   connect();
   routesConfig(app);
