@@ -7,7 +7,7 @@ const { signUp, login } = require('./user.service');
 
 const signUpHandler = async (req, res) => {
   const userData = req.body;
-  const { name, email, password } = userData;
+  const { fullName, email, password } = userData;
   try {
     const existingUser = await User.find({ email });
     console.log(existingUser);
@@ -17,7 +17,7 @@ const signUpHandler = async (req, res) => {
     if (password.length < 8) {
       throw new Error('Password must be at least 8 characters long');
     }
-    if (name.length <= 3) {
+    if (fullName.length <= 3) {
       throw new Error('Name must be at least 4 characters long');
     }
     if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)) {
