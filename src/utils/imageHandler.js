@@ -7,7 +7,13 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const imageHandler = (req, res, next) => {
+// const bodyData = {
+//   username: "Jhon Doe",
+//   file_1: {},
+//   file_2: {},
+// }
+
+imageHandler = (req, res, next) => {
   let uploadingFile = false;
   let uploadingCount = 0;
 
@@ -20,10 +26,12 @@ const imageHandler = (req, res, next) => {
   const bb = busboy({ headers: req.headers });
   req.body = {};
 
+  // Captura de partes que no son un archivo
   bb.on('field', (key, val) => {
     req.body[key] = val;
   });
 
+  // Capturas partes que son archivo
   bb.on('file', (key, stream) => {
     uploadingFile = true;
     uploadingCount++;
@@ -31,6 +39,7 @@ const imageHandler = (req, res, next) => {
       { upload_preset: 'hifility' },
       (err, res) => {
         if (err) throw new Error('Something went wrong!');
+
         req.body[key] = res.secure_url;
         uploadingFile = false;
         uploadingCount--;
@@ -54,4 +63,4 @@ const imageHandler = (req, res, next) => {
   req.pipe(bb);
 };
 
-module.exports = { imageHandler };
+module.exports = imageHandler;

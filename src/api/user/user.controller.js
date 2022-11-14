@@ -68,7 +68,7 @@ const updateDataHandler = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(userId, dataToUpdate);
     if (!user) throw new Error('Invalid user');
-
+    await user.save({ validateBeforeSave: false });
     return res.status(200).json({ message: 'User:', data: user });
   } catch (error) {
     return res
